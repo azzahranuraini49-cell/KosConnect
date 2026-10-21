@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KosConnect – Urus kos lebih mudah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#10272b;--mute:#5b6f72;--bg:#eef3f2;--card:#fff;--line:#d3dfdd;--brass:#b8861f;--ok:#25725a;--bad:#b4402c;--warn:#9a6a00}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Plus Jakarta Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Plus Jakarta Sans",system-ui,sans-serif;margin:0;line-height:1.15}
+header{background:var(--ink);color:#fff;padding:14px 20px;position:sticky;top:0;z-index:5}
+.bar{max-width:1000px;margin:auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
+.logo{font:800 22px "Bricolage Grotesque",sans-serif}
+.logo span{color:#e3b04b}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:none;border:0;color:#c9dad8;font:500 15px inherit;font-family:inherit;padding:8px 12px;border-radius:8px;cursor:pointer}
+nav button:hover{background:#1d3a40}
+nav button[aria-current=true]{background:#e3b04b;color:var(--ink);font-weight:700}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #e3b04b;outline-offset:2px}
+main{max-width:1000px;margin:auto;padding:24px 20px 60px}
+.intro{margin-bottom:20px}
+.intro h1{font-size:clamp(28px,5vw,40px);font-weight:800;margin-bottom:6px}
+.intro p{margin:0;color:var(--mute);max-width:60ch}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.room{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.plate{background:var(--ink);color:#e3b04b;font:800 34px "Bricolage Grotesque",sans-serif;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid var(--brass)}
+.room.full .plate{background:#5b6f72;color:#dfe8e7;border-color:#8fa1a3}
+.room .body{padding:14px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.price{font-weight:700;font-size:18px}.price small{font-weight:400;color:var(--mute)}
+.fac{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.fac li{font-size:13px;background:var(--bg);border-radius:6px;padding:2px 8px}
+.tag{font:700 12px "Plus Jakarta Sans",sans-serif;border-radius:20px;padding:3px 10px;background:#dff1e9;color:var(--ok)}
+.tag.bad{background:#f6dfda;color:var(--bad)}.tag.warn{background:#faecc8;color:var(--warn)}.tag.mute{background:#e1e8e7;color:var(--mute)}
+.btn{font:700 14px inherit;font-family:inherit;border:0;border-radius:8px;padding:9px 14px;background:var(--ink);color:#fff;cursor:pointer;margin-top:auto}
+.btn.alt{background:#e1e8e7;color:var(--ink)}.btn.sm{padding:5px 10px;font-size:13px;margin:0}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
+.panel h2{font-size:20px;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+label{display:block;font-weight:500;font-size:14px;margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;padding:9px 10px;border:1px solid #b9c9c7;border-radius:8px;background:#fff;color:var(--ink)}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px;min-width:480px}
+th{text-align:left;font-size:13px;color:var(--mute);font-weight:500;border-bottom:2px solid var(--line);padding:8px 6px}
+td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
+.stat{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--brass);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font:800 32px "Bricolage Grotesque",sans-serif}.stat span{color:var(--mute);font-size:14px}
+.empty{color:var(--mute);margin:6px 0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s}
+#toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+ol.alur{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+ol.alur li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start}
+ol.alur .n{background:var(--ink);color:#e3b04b;font:800 20px "Bricolage Grotesque",sans-serif;border-radius:50%;width:40px;height:40px;display:grid;place-items:center}
+.hero{background:var(--ink);color:#fff;border-radius:16px;padding:28px 24px;margin-bottom:20px;border-bottom:6px solid var(--brass)}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:800;margin-bottom:10px}
+.hero p{margin:0 0 16px;color:#c9dad8;max-width:62ch}
+.hero .btn{background:#e3b04b;color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:18px}
+.cards .panel{margin:0;display:flex;flex-direction:column;gap:8px}.cards .panel p{margin:0;color:var(--mute);font-size:15px}
+footer{text-align:center;color:var(--mute);font-size:13px;padding:0 20px 30px}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <button class="logo" data-go="beranda" style="background:none;border:0;color:#fff;cursor:pointer;padding:0">Kos<span>Connect</span></button>
+  <nav id="nav" aria-label="Menu utama"></nav>
+</div></header>
+<main id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<footer>Prototype KosConnect. Data tersimpan di browser ini saja. <button class="btn alt sm" id="reset">Reset data contoh</button></footer>
+
+<script>
+const rp = n => 'Rp ' + n.toLocaleString('id-ID');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const KEY = 'kosconnect-v3';
+const seed = () => ({
+  rooms: Array.from({length:30}, (_, i) => {
+    const ac = i >= 15, n = ac ? i - 14 : i + 1, id = (ac ? 'A' : 'K') + String(n).padStart(2, '0');
+    return {id, type: ac ? 'AC' : 'Kipas', price: ac ? 1000000 : 850000,
+      fac: [ac ? 'AC' : 'Kipas angin', 'Kasur', 'Lemari', 'Wi-Fi', 'Kamar mandi dalam'], full: !['K15','A15'].includes(id)};
+  }),
+  bills: [
+    {id:1,room:'K01',name:'Rina Putri',amount:850000,due:'2026-10-05',paid:true},
+    {id:2,room:'K02',name:'Dimas Aji',amount:850000,due:'2026-10-05',paid:false},
+    {id:3,room:'K03',name:'Fajar N.',amount:850000,due:'2026-10-10',paid:false},
+    {id:4,room:'K05',name:'Sari Wulan',amount:850000,due:'2026-10-10',paid:true},
+    {id:5,room:'A01',name:'Bagas P.',amount:1000000,due:'2026-10-15',paid:false},
+    {id:6,room:'A02',name:'Nadia R.',amount:1000000,due:'2026-10-15',paid:true}
+  ],
+  complaints: [
+    {id:1,room:'K02',cat:'Air',desc:'Keran kamar mandi menetes terus.',status:'Diproses'},
+    {id:2,room:'A01',cat:'Listrik',desc:'Lampu kamar mati.',status:'Baru'}
+  ],
+  requests: [
+    {id:1,name:'Intan Sari',phone:'0812-0000-1111',room:'A15',date:'2026-11-01',status:'Menunggu'}
+  ]
+});
+let mem = null, db;
+function load(){ try{ const s = localStorage.getItem(KEY); if(s) return JSON.parse(s);}catch(e){} return mem || seed(); }
+function save(){ mem = db; try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){} }
+db = load();
+
+const views = {beranda:'Beranda', kamar:'Kamar', tagihan:'Tagihan', pengaduan:'Pengaduan', dashboard:'Dashboard pengelola', masuk:'Masuk'};
+let view = (location.hash||'#beranda').slice(1); if(!views[view]) view='beranda';
+let pick = '', flt = 'semua';
+const ADMIN_PW = 'admin123';
+let session = (()=>{ try{ return JSON.parse(sessionStorage.getItem('kosconnect-session')) || {role:'tamu',room:null}; }catch(e){ return {role:'tamu',room:null}; } })();
+function setSession(x){ session = x; try{ sessionStorage.setItem('kosconnect-session', JSON.stringify(x)); }catch(e){} }
+function menu(){
+  const r = session.role;
+  if(r==='pengelola') return [['beranda','Beranda'],['kamar','Kamar'],['tagihan','Tagihan'],['dashboard','Dashboard']];
+  if(r==='penghuni') return [['beranda','Beranda'],['kamar','Kamar'],['tagihan','Tagihan saya'],['pengaduan','Pengaduan saya']];
+  return [['beranda','Beranda'],['kamar','Kamar'],['masuk','Masuk']];
+}
+
+function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'),2200); }
+function go(v){ view=v; location.hash=v; render(); window.scrollTo(0,0); }
+const nextId = a => a.reduce((m,x)=>Math.max(m,x.id),0)+1;
+const tagFor = s => ({Baru:'bad',Diproses:'warn',Selesai:'',Menunggu:'warn',Disetujui:'',Ditolak:'bad'}[s]||'');
+
+function renderNav(){
+  const r = session.role;
+  document.getElementById('nav').innerHTML = menu().map(([k,v])=>`<button data-go="${k}" ${k===view?'aria-current="true"':''}>${v}</button>`).join('')
+   + (r!=='tamu' ? `<span style="color:#e3b04b;font-size:13px;padding:0 6px">${r==='pengelola'?'Pengelola':'Penghuni '+esc(session.room)}</span><button data-logout="1">Keluar</button>` : '');
+}
+
+function vBeranda(){
+  const free = db.rooms.filter(r=>!r.full), fk = free.filter(r=>r.type==='Kipas').length, fa = free.length - fk;
+  const alur = [
+    ['Calon penghuni mengajukan reservasi','Pilih kamar kipas atau AC di menu Kamar, isi form, lalu kirim permintaan.'],
+    ['Pengelola memantau permintaan','Permintaan masuk ke dashboard. Pengelola menyetujui atau menolaknya.'],
+    ['Penghuni mengecek tagihan dan melapor keluhan','Status tagihan ada di menu Tagihan. Fasilitas yang rusak dilaporkan lewat menu Pengaduan.'],
+    ['Semua aktivitas diringkas di dashboard','Kamar terisi, tagihan belum dibayar, dan pengaduan terlihat dalam satu layar.']];
+  const akt = [
+    ['kamar','Informasi dan reservasi kamar','Katalog ${db.rooms.length} kamar lengkap dengan harga, fasilitas, status tersedia atau terisi, dan form reservasi.','Lihat kamar'],
+    ['tagihan','Penagihan dan pembayaran','Rincian biaya, tanggal jatuh tempo, dan status lunas atau belum dibayar.','Cek tagihan'],
+    ['pengaduan','Pelayanan dan pengaduan','Laporkan kerusakan fasilitas, pilih kategori, lalu pantau status penanganannya.','Buat laporan'],
+    ['dashboard','Manajemen operasional','Ringkasan kamar terisi, tagihan belum dibayar, dan jumlah pengaduan untuk pengelola.','Buka dashboard']];
+  return `<section class="hero"><h1>Urus kos lebih mudah, semua dalam satu sistem</h1>
+    <p>KosConnect membantu pemilik dan penghuni kos mengurus kebutuhan sehari-hari di satu tempat: melihat kamar dan harga, mengecek tagihan, menyampaikan keluhan, dan memantau semuanya dari ponsel maupun laptop.</p>
+    <p><b>Sisa ${free.length} kamar kosong:</b> ${fk} kamar kipas (${rp(850000)}) dan ${fa} kamar AC (${rp(1000000)}) per bulan.</p>
+    <button class="btn" data-flt="tersedia">Lihat kamar tersedia</button></section>
+  <div class="panel"><h2>Kenapa KosConnect</h2>
+    <p style="margin:0;max-width:70ch">Mengelola kos lewat buku catatan dan chat pribadi membuat info kamar telat diperbarui, catatan pembayaran sulit dipantau, dan keluhan penghuni mudah terlewat. KosConnect merapikan semuanya agar informasi selalu terbaru dan bisa dilihat penghuni maupun pengelola.</p></div>
+  <div class="panel"><h2>Cara kerja</h2><ol class="alur">${alur.map((a,i)=>`<li><span class="n">${i+1}</span><div><b>${a[0]}</b><div style="color:var(--mute)">${a[1]}</div></div></li>`).join('')}</ol></div>
+  <h2 style="margin:22px 0 12px">Empat layanan dalam satu sistem</h2>
+  <div class="cards">${akt.map(a=>`<div class="panel"><h3>${a[1]}</h3><p>${a[2].replace('${db.rooms.length}',db.rooms.length)}</p>${menu().some(m=>m[0]===a[0])?`<button class="btn" data-go="${a[0]}">${a[3]}</button>`:(session.role==='tamu'?`<button class="btn alt" data-go="masuk">Masuk untuk membuka</button>`:`<button class="btn alt" disabled>Tidak tersedia untuk peran ini</button>`)}</div>`).join('')}</div>`;
+}
+
+function vKamar(){
+  const free = db.rooms.filter(r=>!r.full);
+  const shown = db.rooms.filter(r=>flt==='semua'||(flt==='tersedia'?!r.full:r.type.toLowerCase()===flt));
+  const fb = [['semua','Semua'],['kipas','Kipas'],['ac','AC'],['tersedia','Tersedia']].map(([k,l])=>`<button class="btn sm ${flt===k?'':'alt'}" data-flt="${k}">${l}</button>`).join(' ');
+  return `<div class="intro"><h1>Cari kamar kos yang cocok</h1><p>${free.length} dari ${db.rooms.length} kamar masih tersedia. Kipas ${rp(850000)}, AC ${rp(1000000)} per bulan.</p></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">${fb}</div>
+  <div class="rooms">${shown.map(r=>`<article class="room ${r.full?'full':''}">
+    <div class="plate">${r.id}<span class="tag ${r.full?'mute':''}">${r.full?'Terisi':'Tersedia'}</span></div>
+    <div class="body"><div style="font-size:13px;color:var(--mute)">Kamar ${r.type}</div><div class="price">${rp(r.price)} <small>/ bulan</small></div>
+    <ul class="fac">${r.fac.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
+    <button class="btn" data-pick="${r.id}" ${r.full?'disabled':''}>${r.full?'Tidak tersedia':'Ajukan reservasi'}</button></div></article>`).join('')}</div>
+  <div class="panel" id="form-res" style="margin-top:22px"><h2>Form reservasi</h2>
+    <form data-form="res"><div class="grid2"><div>
+      <label for="rn">Nama lengkap</label><input id="rn" name="name" required>
+      <label for="rp">Nomor WhatsApp</label><input id="rp" name="phone" inputmode="tel" required></div><div>
+      <label for="rr">Kamar</label><select id="rr" name="room" required><option value="">Pilih kamar tersedia</option>${free.map(r=>`<option value="${r.id}" ${r.id===pick?'selected':''}>${r.id} · ${r.type} · ${rp(r.price)}</option>`).join('')}</select>
+      <label for="rd">Rencana masuk</label><input id="rd" name="date" type="date" required></div></div>
+      <button class="btn" style="margin-top:14px">Kirim permintaan</button></form></div>`;
+}
+
+function vTagihan(){
+  const adm = session.role==='pengelola';
+  const mine = db.bills.filter(b=>adm||b.room===session.room);
+  const rows = mine.slice().sort((a,b)=>a.paid-b.paid||a.due.localeCompare(b.due));
+  const unpaid = mine.filter(b=>!b.paid).reduce((s,b)=>s+b.amount,0);
+  return `<div class="intro"><h1>${adm?'Tagihan semua kamar':'Tagihan kamar '+esc(session.room)}</h1><p>Total belum dibayar: <b>${rp(unpaid)}</b>. ${adm?'Tombol di kolom aksi memperbarui status pembayaran (simulasi).':'Status diperbarui oleh pengelola setelah pembayaran diterima.'}</p></div>
+  <div class="panel"><div class="tablewrap"><table><thead><tr><th>Kamar</th><th>Penghuni</th><th>Jumlah</th><th>Jatuh tempo</th><th>Status</th>${adm?'<th>Aksi</th>':''}</tr></thead><tbody>
+  ${rows.map(b=>`<tr><td><b>${b.room}</b></td><td>${esc(b.name)}</td><td>${rp(b.amount)}</td><td>${new Date(b.due).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}</td>
+  <td><span class="tag ${b.paid?'':'bad'}">${b.paid?'Lunas':'Belum dibayar'}</span></td>
+  ${adm?`<td><button class="btn alt sm" data-bill="${b.id}">${b.paid?'Batalkan lunas':'Tandai lunas'}</button></td>`:''}</tr>`).join('')||`<tr><td colspan="6" class="empty">Belum ada tagihan.</td></tr>`}
+  </tbody></table></div></div>`;
+}
+
+function vPengaduan(){
+  const pen = session.role==='penghuni';
+  const occ = db.rooms.filter(r=>r.full);
+  return `<div class="intro"><h1>Pengaduan fasilitas</h1><p>Laporkan fasilitas yang rusak dan pantau status penanganannya.</p></div>
+  <div class="grid2"><div class="panel"><h2>Buat laporan</h2><form data-form="comp">
+    ${pen?`<label>Kamar</label><input value="Kamar ${esc(session.room)}" disabled><input type="hidden" name="room" value="${esc(session.room)}">`:`<label for="cr">Kamar</label><select id="cr" name="room" required><option value="">Pilih kamar</option>${occ.map(r=>`<option>${r.id}</option>`).join('')}</select>`}
+    <label for="cc">Kategori</label><select id="cc" name="cat"><option>Air</option><option>Listrik</option><option>Wi-Fi</option><option>AC / Kipas</option><option>Perabot</option><option>Lainnya</option></select>
+    <label for="cd">Deskripsi</label><textarea id="cd" name="desc" rows="3" required></textarea>
+    <button class="btn" style="margin-top:14px">Kirim laporan</button></form></div>
+  <div class="panel"><h2>Status laporan</h2>${listComp(false, pen?session.room:null)}</div></div>`;
+}
+function listComp(admin, room){
+  const list = db.complaints.filter(c=>!room||c.room===room);
+  if(!list.length) return '<p class="empty">Belum ada laporan.</p>';
+  return list.slice().reverse().map(c=>`<div style="padding:10px 0;border-bottom:1px solid var(--line)">
+   <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>Kamar ${c.room} · ${esc(c.cat)}</b><span class="tag ${tagFor(c.status)}">${c.status}</span></div>
+   <div style="color:var(--mute);margin:4px 0">${esc(c.desc)}</div>
+   ${admin&&c.status!=='Selesai'?`<button class="btn alt sm" data-comp="${c.id}">${c.status==='Baru'?'Mulai proses':'Tandai selesai'}</button>`:''}</div>`).join('');
+}
+
+function vMasuk(){
+  const rooms = [...new Map(db.bills.map(b=>[b.room,b])).values()];
+  return `<div class="intro"><h1>Masuk</h1><p>Calon penghuni tidak perlu masuk. Langsung buka menu Kamar untuk mengajukan reservasi.</p></div>
+  <div class="grid2"><div class="panel"><h2>Penghuni kos</h2><form data-form="login-p">
+    <label for="lp">Kamar Anda</label><select id="lp" name="room" required><option value="">Pilih kamar</option>${rooms.map(b=>`<option value="${b.room}">${b.room} · ${esc(b.name)}</option>`).join('')}</select>
+    <button class="btn" style="margin-top:14px">Masuk sebagai penghuni</button></form></div>
+  <div class="panel"><h2>Pengelola</h2><form data-form="login-a">
+    <label for="la">Kata sandi</label><input id="la" name="pw" type="password" autocomplete="off" required>
+    <button class="btn" style="margin-top:14px">Masuk sebagai pengelola</button></form></div></div>`;
+}
+
+function vDashboard(){
+  const full = db.rooms.filter(r=>r.full).length, unpaid = db.bills.filter(b=>!b.paid).length;
+  const open = db.complaints.filter(c=>c.status!=='Selesai').length, wait = db.requests.filter(r=>r.status==='Menunggu').length;
+  return `<div class="intro"><h1>Dashboard pengelola</h1><p>Ringkasan kamar, pembayaran, dan keluhan dalam satu layar.</p></div>
+  <div class="stats">
+   <div class="stat"><b>${full}/${db.rooms.length}</b><span>Kamar terisi</span></div>
+   <div class="stat"><b>${unpaid}</b><span>Tagihan belum dibayar</span></div>
+   <div class="stat"><b>${open}</b><span>Pengaduan aktif</span></div>
+   <div class="stat"><b>${wait}</b><span>Reservasi menunggu</span></div></div>
+  <div class="grid2"><div class="panel"><h2>Permintaan reservasi</h2>
+   ${db.requests.length?db.requests.slice().reverse().map(r=>`<div style="padding:10px 0;border-bottom:1px solid var(--line)">
+    <div style="display:flex;justify-content:space-between;gap:8px"><b>${esc(r.name)} · Kamar ${r.room}</b><span class="tag ${tagFor(r.status)}">${r.status}</span></div>
+    <div style="color:var(--mute);margin:4px 0">${esc(r.phone)} · masuk ${r.date}</div>
+    ${r.status==='Menunggu'?`<button class="btn sm" data-req="ok" data-id="${r.id}">Setujui</button> <button class="btn alt sm" data-req="no" data-id="${r.id}">Tolak</button>`:''}</div>`).join(''):'<p class="empty">Belum ada permintaan masuk.</p>'}</div>
+  <div class="panel"><h2>Pengaduan fasilitas</h2>${listComp(true)}</div></div>`;
+}
+
+function render(){
+  if(!menu().some(m=>m[0]===view)) view = 'beranda';
+  renderNav();
+  document.getElementById('reset').hidden = session.role!=='pengelola';
+  document.getElementById('app').innerHTML = {beranda:vBeranda,kamar:vKamar,tagihan:vTagihan,pengaduan:vPengaduan,dashboard:vDashboard,masuk:vMasuk}[view]();
+}
+
+document.addEventListener('click', e=>{
+  const t = e.target.closest('button'); if(!t) return;
+  if(t.dataset.logout){ setSession({role:'tamu',room:null}); go('beranda'); return toast('Anda sudah keluar'); }
+  if(t.dataset.go) return go(t.dataset.go);
+  if(t.dataset.flt){ flt=t.dataset.flt; if(view!=='kamar') return go('kamar'); render(); return; }
+  if(t.dataset.pick){ pick=t.dataset.pick; render(); const f=document.getElementById('form-res'); f.scrollIntoView({behavior:'smooth'}); return; }
+  if(t.dataset.bill){ const b=db.bills.find(x=>x.id==t.dataset.bill); b.paid=!b.paid; save(); render(); return toast(b.paid?'Tagihan ditandai lunas':'Status lunas dibatalkan'); }
+  if(t.dataset.comp){ const c=db.complaints.find(x=>x.id==t.dataset.comp); c.status = c.status==='Baru'?'Diproses':'Selesai'; save(); render(); return toast('Status pengaduan: '+c.status); }
+  if(t.dataset.req){
+    const r=db.requests.find(x=>x.id==t.dataset.id);
+    if(t.dataset.req==='ok'){
+      const room=db.rooms.find(x=>x.id===r.room);
+      if(room.full) return toast('Kamar '+room.id+' sudah terisi');
+      room.full=true; r.status='Disetujui';
+      db.bills.push({id:nextId(db.bills),room:room.id,name:r.name,amount:room.price,due:r.date,paid:false});
+      toast('Disetujui. Kamar terisi dan tagihan pertama dibuat');
+    } else { r.status='Ditolak'; toast('Permintaan ditolak'); }
+    save(); render(); return;
+  }
+  if(t.id==='reset'){ db=seed(); save(); render(); toast('Data contoh dikembalikan'); }
+});
+
+document.addEventListener('submit', e=>{
+  e.preventDefault(); const f=e.target, d=Object.fromEntries(new FormData(f));
+  if(f.dataset.form==='login-p'){ setSession({role:'penghuni',room:d.room}); go('tagihan'); return toast('Selamat datang, penghuni kamar '+d.room); }
+  if(f.dataset.form==='login-a'){ if(d.pw!==ADMIN_PW) return toast('Kata sandi salah'); setSession({role:'pengelola',room:null}); go('dashboard'); return toast('Masuk sebagai pengelola'); }
+  if(f.dataset.form==='res'){
+    db.requests.push({id:nextId(db.requests),name:d.name,phone:d.phone,room:d.room,date:d.date,status:'Menunggu'});
+    pick=''; save(); toast('Permintaan terkirim. Pengelola akan menghubungi Anda'); render();
+  } else {
+    db.complaints.push({id:nextId(db.complaints),room:d.room,cat:d.cat,desc:d.desc,status:'Baru'});
+    save(); toast('Laporan tercatat di dashboard'); render();
+  }
+});
+window.addEventListener('hashchange',()=>{ const v=location.hash.slice(1); if(views[v]&&v!==view){view=v;render();} });
+render();
+</script>
+</body>
+</html>
